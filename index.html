@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!--
+    PROPOSITO: Generador de Prompts con interfaz nativa Android (Material Design 3).
+    ESTÁNDARES: Sigue guías de Google Cloud (Vertex), Anthropic (Claude) y OpenAI.
+    AUTOR: AI Thought Partner & Expert Developer
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#6750A4" id="theme-meta">
+    <title>Prompt Engineering Guide</title>    
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <link rel="manifest" href="./manifest.json">
+    <style>
+        :root {
+            /* Colores Material You - Light Mode */
+            --md-sys-color-primary: #6750A4;
+            --md-sys-color-on-primary: #ffffff;
+            --md-sys-color-surface: #fef7ff;
+            --md-sys-color-on-surface: #1d1b20;
+            --md-sys-color-surface-container: #f3edf7;
+            --md-sys-color-outline: #79747e;
+            --md-sys-color-secondary-container: #eaddff;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Colores Material You - Dark Mode */
+                --md-sys-color-primary: #d0bcff;
+                --md-sys-color-on-primary: #381e72;
+                --md-sys-color-surface: #141218;
+                --md-sys-color-on-surface: #e6e1e5;
+                --md-sys-color-surface-container: #211f26;
+                --md-sys-color-outline: #938f99;
+                --md-sys-color-secondary-container: #4f378b;
+            }
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        /* Top App Bar */
+        .top-app-bar {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 22px;
+            background: var(--md-sys-color-surface);
+        }
+
+        .content {
+            padding: 16px;
+            flex: 1;
+            overflow-y: auto;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card {
+            background: var(--md-sys-color-surface-container);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            border: 1px solid transparent;
+        }
+
+        .step-title {
+            font-size: 12px;
+            color: var(--md-sys-color-primary);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        label { display: block; margin-bottom: 8px; font-weight: 500; }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 14px;
+            margin-top: 4px;
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: 8px;
+            background: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            border: none;
+            padding: 14px;
+            border-radius: 100px;
+            font-weight: 500;
+            width: 100%;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        .hidden { display: none; }
+
+        #result-area {
+            background: var(--md-sys-color-secondary-container);
+            padding: 16px;
+            border-radius: 12px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+            margin-top: 12px;
+            border: 1px dashed var(--md-sys-color-outline);
+        }
+
+        .slider-container { margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <header class="top-app-bar">Prompt Engineering Lab</header>
+
+    <main class="content">
+        <!-- Paso 1: Rol -->
+        <div id="step1" class="card">
+            <span class="step-title">Paso 1: Asignar Persona</span>
+            <label>¿Qué experto debe ser la IA?</label>
+            <input type="text" id="role" placeholder="Ej: Analista de Datos Senior">
+            <button class="btn-primary" onclick="navigateTo('step2')">Continuar</button>
+        </div>
+
+        <!-- Paso 2: Tarea -->
+        <div id="step2" class="card hidden">
+            <span class="step-title">Paso 2: La Misión</span>
+            <label>¿Cuál es el objetivo principal?</label>
+            <textarea id="task" rows="4" placeholder="Describe la tarea detalladamente..."></textarea>
+            <button class="btn-primary" onclick="navigateTo('step-examples')">Continuar</button>
+        </div>
+
+        <!-- Paso Intermedio: Ejemplos (Few-Shot) -->
+        <div id="step-examples" class="card hidden">
+            <span class="step-title">Paso 3: Ejemplos (Few-Shot)</span>
+            <label>Ejemplo de Entrada (Opcional)</label>
+            <input type="text" id="example-input" placeholder="User: Hola">
+            <label style="margin-top:10px;">Ejemplo de Salida</label>
+            <textarea id="example-output" rows="2" placeholder="Assistant: ¡Hola! ¿En qué ayudo?"></textarea>
+            <button class="btn-primary" onclick="navigateTo('step3')">Continuar</button>
+        </div>
+
+        <!-- Paso 3: Configuración Avanzada -->
+        <div id="step3" class="card hidden">
+            <span class="step-title">Paso 4: Parámetros Finales</span>
+            <label>Formato de Salida</label>
+            <select id="format">
+                <option value="Markdown">Markdown</option>
+                <option value="JSON">JSON</option>
+                <option value="Tabla">Tabla</option>
+                <option value="Lista de pasos">Lista de pasos</option>
+            </select>
+
+            <div class="slider-container">
+                <label style="display: flex; justify-content: space-between;">
+                    <span>Temperatura (Creatividad)</span>
+                    <span id="temp-val">0.7</span>
+                </label>
+                <input type="range" id="temp" min="0" max="1" step="0.1" value="0.7" oninput="document.getElementById('temp-val').innerText = this.value">
+            </div>
+
+            <div style="margin-top: 15px;">
+                <input type="checkbox" id="cot" checked style="width: auto;">
+                <label for="cot" style="display: inline;">Activar Pensamiento en Cadena (CoT)</label>
+            </div>
+            
+            <button class="btn-primary" onclick="generatePrompt()">Generar Prompt</button>
+        </div>
+
+        <!-- Pantalla de Resultado -->
+        <div id="result-card" class="card hidden">
+            <span class="step-title">Prompt Final Optimizado</span>
+            <div id="result-area"></div>
+            <button class="btn-primary" onclick="copyToClipboard()">Copiar al Portapapeles</button>
+            <button class="btn-primary" style="background:transparent; color:var(--md-sys-color-primary);" onclick="resetApp()">Crear otro</button>
+        </div>
+    </main>
+
+    <script>
+        /**
+         * Maneja la navegación entre las diferentes tarjetas (pasos) de la aplicación.
+         * @param {string} stepId - El ID del elemento HTML que se desea mostrar.
+         */
+        function navigateTo(stepId) {
+            document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+            document.getElementById(stepId).classList.remove('hidden');
+        }
+
+        /**
+         * Construye el prompt final basándose en las mejores prácticas de Google, OpenAI y Anthropic.
+         * Utiliza delimitadores claros y estructura jerárquica.
+         */
+        function generatePrompt() {
+            const role = document.getElementById('role').value;
+            const task = document.getElementById('task').value;
+            const exIn = document.getElementById('example-input').value;
+            const exOut = document.getElementById('example-output').value;
+            const format = document.getElementById('format').value;
+            const temp = document.getElementById('temp').value;
+            const cot = document.getElementById('cot').checked;
+
+            // Construcción del Prompt con técnica de delimitadores (Google/Claude)
+            let prompt = `=== SYSTEM ===\nRole: ${role}\nTemperature: ${temp}\n\n`;
+            prompt += `=== TASK ===\n${task}\n\n`;
+
+            if(exIn && exOut) {
+                prompt += `=== EXAMPLES ===\nInput: ${exIn}\nOutput: ${exOut}\n\n`;
+            }
+
+            prompt += `=== OUTPUT REQUIREMENTS ===\n- Format: ${format}\n`;
+            if(cot) prompt += `- Think step-by-step before providing the final answer.\n`;
+
+            document.getElementById('result-area').innerText = prompt;
+            navigateTo('result-card');
+        }
+
+        /**
+         * Copia el texto generado al portapapeles del dispositivo.
+         * @async
+         */
+        async function copyToClipboard() {
+            const text = document.getElementById('result-area').innerText;
+            try {
+                await navigator.clipboard.writeText(text);
+                alert('¡Copiado!');
+            } catch (err) {
+                console.error('Error al copiar: ', err);
+            }
+        }
+
+        /**
+         * Sincroniza el color de la barra de estado de Android con el tema del sistema.
+         * Basado en las especificaciones de Material Design 3.
+         */
+        function syncTheme() {
+            const themeMeta = document.getElementById('theme-meta');
+            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            themeMeta.setAttribute('content', isDark ? '#141218' : '#6750A4');
+        }
+
+        // Listener para cambios de tema en tiempo real
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncTheme);
+        syncTheme();
+
+/**
+ * Guarda automáticamente todos los valores de los inputs en el localStorage del navegador.
+ * Se ejecuta en cada evento de entrada para prevenir pérdida de datos.
+ */
+function autoSave() {
+    const data = {
+        role: document.getElementById('role').value,
+        task: document.getElementById('task').value,
+        exIn: document.getElementById('example-input').value,
+        exOut: document.getElementById('example-output').value,
+        format: document.getElementById('format').value,
+        temp: document.getElementById('temp').value,
+        cot: document.getElementById('cot').checked,
+        currentStep: getCurrentStepId()
+    };
+    localStorage.setItem('prompt_builder_data', JSON.stringify(data));
+}
+
+/**
+ * Sanitiza una cadena de texto para prevenir ataques XSS convirtiendo
+ * caracteres sensibles en entidades HTML seguras.
+ * @param {string} str - El texto crudo de entrada.
+ * @returns {string} El texto sanitizado.
+ */
+function sanitizeHTML(str) {
+    if (!str) return '';
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return str.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+
+/**
+ * Recupera los datos previamente guardados del localStorage y los restaura en la interfaz.
+ * Se ejecuta al cargar la página (DOMContentLoaded).
+ */
+
+/**
+ * Versión mejorada de loadSavedData con Try-Catch y Sanitización.
+ */
+function loadSavedData() {
+    try {
+        const saved = localStorage.getItem('prompt_builder_data');
+        if (!saved) return;
+
+        const data = JSON.parse(saved);
+        
+        // Restauramos y sanitizamos cada campo para seguridad
+        document.getElementById('role').value = sanitizeHTML(data.role || '');
+        document.getElementById('task').value = sanitizeHTML(data.task || '');
+        document.getElementById('example-input').value = sanitizeHTML(data.exIn || '');
+        document.getElementById('example-output').value = sanitizeHTML(data.exOut || '');
+        
+        // Configuración técnica (Valores controlados)
+        document.getElementById('format').value = data.format || 'Markdown';
+        document.getElementById('temp').value = data.temp || 0.7;
+        document.getElementById('temp-val').innerText = data.temp || 0.7;
+        document.getElementById('cot').checked = data.cot;
+
+        if (data.currentStep) navigateTo(data.currentStep);
+    } catch (e) {
+        console.error("Error al cargar datos seguros:", e);
+        localStorage.removeItem('prompt_builder_data'); // Limpiamos si hay corrupción
+    }
+}
+
+/**
+ * Identifica qué tarjeta (paso) está visible actualmente.
+ * @returns {string} ID del elemento actual.
+ */
+function getCurrentStepId() {
+    const visibleCard = document.querySelector('.card:not(.hidden)');
+    return visibleCard ? visibleCard.id : 'step1';
+}
+
+// Inicialización al cargar el DOM
+document.addEventListener('DOMContentLoaded', () => {
+    loadSavedData();
+    syncTheme();
+
+    // Escuchar cambios en todos los inputs para auto-guardado
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        input.addEventListener('input', autoSave);
+    });
+});
+
+// Modificar la función de navegación para que también guarde el paso actual
+const originalNavigateTo = navigateTo;
+navigateTo = function(stepId) {
+    originalNavigateTo(stepId);
+    autoSave(); 
+};
+
+/**
+ * Limpia el almacenamiento local y reinicia la aplicación.
+ */
+function resetApp() {
+    localStorage.removeItem('prompt_builder_data');
+    location.reload();
+}
+
+/**
+ * Registra el Service Worker para habilitar el modo PWA Offline.
+ * Solo se ejecuta en entornos seguros (HTTPS) o localhost.
+ */
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => console.log('Service Worker registrado con éxito', reg))
+            .catch(err => console.warn('Error al registrar Service Worker', err));
+    });
+}
+
+    </script>
+</body>
+</html>
+
