@@ -1,4 +1,5 @@
 {
+  "id": "/prompt-engineer-app/"
   "name": "Prompt Engineering Lab",
   "short_name": "PromptLab",
   "start_url": "./index.html",
