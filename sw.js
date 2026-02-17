@@ -6,8 +6,7 @@
 const CACHE_NAME = 'prompt-lab-v1';
 const ASSETS = [
     './',
-    './index.html',
-    'https://fonts.googleapis.com'
+    './index.html'
 ];
 
 // Instalación: Almacena los archivos en caché
