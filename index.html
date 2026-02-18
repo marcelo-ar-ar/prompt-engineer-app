@@ -1,10 +1,34 @@
 <!DOCTYPE html>
+<!--
+MIT License
+
+Copyright (c) 2026 Marcelo Andrés Reynoso (marcelo-ar-ar)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+
 <html lang="es">
 <head>
     <!--
     PROPOSITO: Generador de Prompts con interfaz nativa Android (Material Design 3).
     ESTÁNDARES: Sigue guías de Google Cloud (Vertex), Anthropic (Claude) y OpenAI.
-    AUTOR: AI Thought Partner & Expert Developer
+    AUTOR: AI Thought Partner & Marcelo Andrés Reynoso
     -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,119 +44,152 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
     <link rel="manifest" href="./manifest.json">
     <style>
+    :root {
+        /* Colores Material You - Definiciones dinámicas */
+        --md-sys-color-primary: #6750A4;
+        --md-sys-color-on-primary: #ffffff;
+        --md-sys-color-surface: #fef7ff;
+        --md-sys-color-on-surface: #1d1b20;
+        --md-sys-color-surface-container: #f3edf7;
+        --md-sys-color-outline: #79747e;
+        --md-sys-color-secondary-container: #eaddff;
+    }
+
+    @media (prefers-color-scheme: dark) {
         :root {
-            /* Colores Material You - Light Mode */
-            --md-sys-color-primary: #6750A4;
-            --md-sys-color-on-primary: #ffffff;
-            --md-sys-color-surface: #fef7ff;
-            --md-sys-color-on-surface: #1d1b20;
-            --md-sys-color-surface-container: #f3edf7;
-            --md-sys-color-outline: #79747e;
-            --md-sys-color-secondary-container: #eaddff;
+            --md-sys-color-primary: #d0bcff;
+            --md-sys-color-on-primary: #381e72;
+            --md-sys-color-surface: #141218;
+            --md-sys-color-on-surface: #e6e1e5;
+            --md-sys-color-surface-container: #211f26;
+            --md-sys-color-outline: #938f99;
+            --md-sys-color-secondary-container: #4f378b;
         }
+    }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                /* Colores Material You - Dark Mode */
-                --md-sys-color-primary: #d0bcff;
-                --md-sys-color-on-primary: #381e72;
-                --md-sys-color-surface: #141218;
-                --md-sys-color-on-surface: #e6e1e5;
-                --md-sys-color-surface-container: #211f26;
-                --md-sys-color-outline: #938f99;
-                --md-sys-color-secondary-container: #4f378b;
-            }
+    body {
+        margin: 0;
+        font-family: 'Roboto', sans-serif;
+        font-size: 1rem; /* Base 16px para escalabilidad */
+        background-color: var(--md-sys-color-surface);
+        color: var(--md-sys-color-on-surface);
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        transition: background-color 0.3s ease;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    /* Estructura Fija (px) para consistencia visual */
+    .top-app-bar {
+        height: 64px; 
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        font-size: 1.375rem; /* 22px - Escala con el sistema */
+        background: var(--md-sys-color-surface);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Elevación sutil en px */
+    }
+
+    .content {
+        padding: 1rem;
+        flex: 1;
+        overflow-y: auto;
+        max-width: 600px; /* Límite físico en px para lectura cómoda */
+        margin: 0 auto;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Componentes Elásticos (rem) */
+    .card {
+        background: var(--md-sys-color-surface-container);
+        border-radius: 1rem; /* 16px */
+        padding: 1.5rem; /* 24px */
+        margin-bottom: 1rem;
+        border: 1px solid transparent; /* Bordes siempre en px para nitidez */
+    }
+
+    .step-title {
+        font-size: 0.75rem; /* 12px */
+        color: var(--md-sys-color-primary);
+        font-weight: 700;
+        letter-spacing: 0.5px; /* En px para control tipográfico fino */
+        margin-bottom: 0.75rem;
+        display: block;
+        text-transform: uppercase;
+    }
+
+    label { 
+        display: block; 
+        margin-bottom: 0.5rem; 
+        font-weight: 500; 
+        font-size: 0.9375rem; /* ~15px */
+    }
+
+    /* Inputs con bordes nítidos (px) y relleno elástico (rem) */
+    input, textarea, select {
+        width: 100%;
+        padding: 0.875rem; 
+        margin-top: 4px;
+        border: 1px solid var(--md-sys-color-outline); 
+        border-radius: 8px;
+        background: var(--md-sys-color-surface);
+        color: var(--md-sys-color-on-surface);
+        box-sizing: border-box;
+        font-size: 1rem; 
+    }
+
+    /* Botón Material 3 - Estética de Píldora */
+    .btn-primary {
+        background: var(--md-sys-color-primary);
+        color: var(--md-sys-color-on-primary);
+        border: none;
+        padding: 0.875rem;
+        border-radius: 100px; /* Forma de píldora fija */
+        font-weight: 500;
+        width: 100%;
+        margin-top: 1.25rem;
+        cursor: pointer;
+        font-size: 0.875rem;
+        transition: elevation 0.2s, background-color 0.2s;
+    }
+
+    .btn-primary:active {
+        opacity: 0.85;
+        transform: scale(0.98);
+    }
+
+    /* Área de resultados con tipografía mono para código */
+    #result-area {
+        background: var(--md-sys-color-secondary-container);
+        padding: 1rem;
+        border-radius: 12px;
+        white-space: pre-wrap;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.875rem;
+        margin-top: 0.75rem;
+        border: 1px dashed var(--md-sys-color-outline);
+    }
+
+    /* Accesibilidad: Indicador de foco visual claro */
+    input:focus, textarea:focus, select:focus {
+        outline: 2px solid var(--md-sys-color-primary);
+        outline-offset: 2px;
+    }
+
+    /* Regla esencial para el flujo de navegación */
+    .hidden {
+        display: none !important;
+    }
+    .card:not(.hidden) {
+            animation: fadeIn 0.3s ease-out;
         }
-
-        body {
-            margin: 0;
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--md-sys-color-surface);
-            color: var(--md-sys-color-on-surface);
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            transition: all 0.3s ease;
-        }
-
-        /* Top App Bar */
-        .top-app-bar {
-            height: 64px;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            font-size: 22px;
-            background: var(--md-sys-color-surface);
-        }
-
-        .content {
-            padding: 16px;
-            flex: 1;
-            overflow-y: auto;
-            max-width: 600px;
-            margin: 0 auto;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .card {
-            background: var(--md-sys-color-surface-container);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 16px;
-            border: 1px solid transparent;
-        }
-
-        .step-title {
-            font-size: 12px;
-            color: var(--md-sys-color-primary);
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-            display: block;
-            text-transform: uppercase;
-        }
-
-        label { display: block; margin-bottom: 8px; font-weight: 500; }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 14px;
-            margin-top: 4px;
-            border: 1px solid var(--md-sys-color-outline);
-            border-radius: 8px;
-            background: var(--md-sys-color-surface);
-            color: var(--md-sys-color-on-surface);
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-
-        .btn-primary {
-            background: var(--md-sys-color-primary);
-            color: var(--md-sys-color-on-primary);
-            border: none;
-            padding: 14px;
-            border-radius: 100px;
-            font-weight: 500;
-            width: 100%;
-            margin-top: 20px;
-            cursor: pointer;
-        }
-
-        .hidden { display: none; }
-
-        #result-area {
-            background: var(--md-sys-color-secondary-container);
-            padding: 16px;
-            border-radius: 12px;
-            white-space: pre-wrap;
-            font-family: monospace;
-            font-size: 14px;
-            margin-top: 12px;
-            border: 1px dashed var(--md-sys-color-outline);
-        }
-
-        .slider-container { margin-top: 20px; }
+    
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }   
     </style>
 </head>
 <body>
@@ -142,24 +199,24 @@
     <main class="content">
         <!-- Paso 1: Rol -->
         <div id="step1" class="card">
-            <span class="step-title">Paso 1: Asignar Persona</span>
-            <label>¿Qué experto debe ser la IA?</label>
-            <input type="text" id="role" placeholder="Ej: Analista de Datos Senior">
+            <span class="step-title">Paso 1: Definir el rol</span>
+            <label>Indicar a la IA su función</label>
+            <input type="text" id="role" placeholder="Ej: Un tutor de matemáticas">
             <button class="btn-primary" onclick="navigateTo('step2')">Continuar</button>
         </div>
 
         <!-- Paso 2: Tarea -->
         <div id="step2" class="card hidden">
-            <span class="step-title">Paso 2: La Misión</span>
-            <label>¿Cuál es el objetivo principal?</label>
+            <span class="step-title">Paso 2: Describir la tarea</span>
+            <label>Ser específico sobre lo que se necesita resolver</label>
             <textarea id="task" rows="4" placeholder="Describe la tarea detalladamente..."></textarea>
             <button class="btn-primary" onclick="navigateTo('step-examples')">Continuar</button>
         </div>
 
         <!-- Paso Intermedio: Ejemplos (Few-Shot) -->
         <div id="step-examples" class="card hidden">
-            <span class="step-title">Paso 3: Ejemplos (Few-Shot)</span>
-            <label>Ejemplo de Entrada (Opcional)</label>
+            <span class="step-title">Paso 3: (Opcional) Mostrar un caso anterior para que la IA imite el tono</span>
+            <label>Ejemplo de Entrada</label>
             <input type="text" id="example-input" placeholder="User: Hola">
             <label style="margin-top:10px;">Ejemplo de Salida</label>
             <textarea id="example-output" rows="2" placeholder="Assistant: ¡Hola! ¿En qué ayudo?"></textarea>
@@ -179,10 +236,11 @@
 
             <div class="slider-container">
                 <label style="display: flex; justify-content: space-between;">
-                    <span>Temperatura (Creatividad)</span>
+                    <span>Ajustar la creatividad</span>
                     <span id="temp-val">0.7</span>
                 </label>
                 <input type="range" id="temp" min="0" max="1" step="0.1" value="0.7" oninput="document.getElementById('temp-val').innerText = this.value">
+                <label>Usar una temperatura baja (0.1) para datos exactos o alta (0.8) para escritura creativa</label>
             </div>
 
             <div style="margin-top: 15px;">
@@ -197,8 +255,9 @@
         <div id="result-card" class="card hidden">
             <span class="step-title">Prompt Final Optimizado</span>
             <div id="result-area"></div>
+            <label>Usar el botón final y llevar el prompt a ChatGPT, Claude o Gemini</label>
             <button class="btn-primary" onclick="copyToClipboard()">Copiar al Portapapeles</button>
-            <button class="btn-primary" style="background:transparent; color:var(--md-sys-color-primary);" onclick="resetApp()">Crear otro</button>
+            <button class="btn-primary" style="background:transparent; color:var(--md-sys-color-primary);" onclick="resetApp()">Crear otro prompt</button>
         </div>
     </main>
 
@@ -248,7 +307,7 @@
             const text = document.getElementById('result-area').innerText;
             try {
                 await navigator.clipboard.writeText(text);
-                alert('¡Copiado!');
+                alert('¡Copiado! Llevar el prompt a ChatGPT, Claude o Gemini');
             } catch (err) {
                 console.error('Error al copiar: ', err);
             }
