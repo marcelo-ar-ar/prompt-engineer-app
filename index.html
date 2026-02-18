@@ -2,7 +2,7 @@
 <!--
 MIT License
 
-Copyright (c) 2026 Marcelo Andrés Reynoso (marcelo-ar-ar)
+Copyright (c) 2026 Marcelo Andrés Reynoso
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
 
+
 <html lang="es">
 <head>
     <!--
@@ -34,14 +35,7 @@ SOFTWARE.
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#6750A4" id="theme-meta">
     <title>Prompt Engineering Guide</title>    
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <!-- Icono estándar para navegadores -->
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
-    <!-- Icono para Android (PWA) -->
-    <link rel="shortcut icon" sizes="192x192" href="./android-chrome-192x192.png">
-    <!-- Icono para iOS (Apple Touch Icon) -->
-    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link href="https://fonts.googleapis.com" rel="stylesheet">
     <link rel="manifest" href="./manifest.json">
     <style>
     :root {
@@ -182,45 +176,80 @@ SOFTWARE.
     .hidden {
         display: none !important;
     }
+
     .card:not(.hidden) {
-            animation: fadeIn 0.3s ease-out;
-        }
-    
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }   
+        animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Contenedor de acciones para botones alineados */
+    .step-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1.25rem;
+    }
+
+    /* Ajuste para que los botones compartan el espacio */
+    .step-actions .btn-primary {
+        margin-top: 0;
+        flex: 1;
+    }
+
     </style>
 </head>
 <body>
 
     <header class="top-app-bar">Prompt Engineering Lab</header>
 
-    <main class="content">
+    <!-- Etiqueta de región principal para lectores de pantalla -->
+    <main class="content" role="main" aria-label="Creador de Prompts Paso a Paso">
         <!-- Paso 1: Rol -->
-        <div id="step1" class="card">
+        <div id="step1" class="card" role="region" aria-labelledby="title-step1">
             <span class="step-title">Paso 1: Definir el rol</span>
             <label>Indicar a la IA su función</label>
-            <input type="text" id="role" placeholder="Ej: Un tutor de matemáticas">
-            <button class="btn-primary" onclick="navigateTo('step2')">Continuar</button>
+            <input type="text" id="role" name="role" placeholder="Ej: Un tutor de matemáticas" aria-required="true">
+
+            <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
+            <button class="btn-primary" onclick="navigateTo('step2')" aria-label="Ir al siguiente paso: Describir la tarea">Continuar</button>
+            </div>
         </div>
 
         <!-- Paso 2: Tarea -->
-        <div id="step2" class="card hidden">
+        <div id="step2" class="card hidden" role="region" aria-labelledby="title-step2">
             <span class="step-title">Paso 2: Describir la tarea</span>
             <label>Ser específico sobre lo que se necesita resolver</label>
             <textarea id="task" rows="4" placeholder="Describe la tarea detalladamente..."></textarea>
-            <button class="btn-primary" onclick="navigateTo('step-examples')">Continuar</button>
+
+            <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
+                <button class="btn-primary" style="background: transparent; color: var(--md-sys-color-primary);" onclick="goBack()" aria-label="Volver al paso anterior">
+                    Volver
+                </button>
+                <button class="btn-primary" onclick="navigateTo('step-examples')" aria-label="Continuar a ejemplos">
+                    Continuar
+                </button>
+            </div>
         </div>
 
         <!-- Paso Intermedio: Ejemplos (Few-Shot) -->
-        <div id="step-examples" class="card hidden">
+        <div id="step-examples" class="card hidden" role="region" aria-labelledby="title-step-examples">
             <span class="step-title">Paso 3: (Opcional) Mostrar un caso anterior para que la IA imite el tono</span>
             <label>Ejemplo de Entrada</label>
             <input type="text" id="example-input" placeholder="User: Hola">
             <label style="margin-top:10px;">Ejemplo de Salida</label>
             <textarea id="example-output" rows="2" placeholder="Assistant: ¡Hola! ¿En qué ayudo?"></textarea>
-            <button class="btn-primary" onclick="navigateTo('step3')">Continuar</button>
+
+            <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
+                <button class="btn-primary" style="background: transparent; color: var(--md-sys-color-primary);" onclick="goBack()" aria-label="Volver al paso anterior">
+                    Volver
+                </button>
+                <button class="btn-primary" onclick="navigateTo('step3')" aria-label="Continuar a parámetros finales">
+                    Continuar
+                </button>
+            </div>
         </div>
 
         <!-- Paso 3: Configuración Avanzada -->
@@ -236,28 +265,47 @@ SOFTWARE.
 
             <div class="slider-container">
                 <label style="display: flex; justify-content: space-between;">
-                    <span>Ajustar la creatividad</span>
+                    <span style="margin-top:10px;">Ajustar la creatividad</span>
                     <span id="temp-val">0.7</span>
                 </label>
                 <input type="range" id="temp" min="0" max="1" step="0.1" value="0.7" oninput="document.getElementById('temp-val').innerText = this.value">
-                <label>Usar una temperatura baja (0.1) para datos exactos o alta (0.8) para escritura creativa</label>
+                <label style="font-size:0.8rem;">Usar una temperatura baja (0.1) para datos exactos o alta (0.8) para escritura creativa</label>
             </div>
 
             <div style="margin-top: 15px;">
                 <input type="checkbox" id="cot" checked style="width: auto;">
                 <label for="cot" style="display: inline;">Activar Pensamiento en Cadena (CoT)</label>
             </div>
-            
-            <button class="btn-primary" onclick="generatePrompt()">Generar Prompt</button>
-        </div>
 
-        <!-- Pantalla de Resultado -->
-        <div id="result-card" class="card hidden">
+            <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
+                <button class="btn-primary" style="background: transparent; color: var(--md-sys-color-primary);" onclick="goBack()" aria-label="Volver al paso anterior">
+                    Volver
+                </button>
+            <button class="btn-primary" onclick="generatePrompt()">Generar Prompt</button>
+            </div>
+
+           </div>
+
+
+        <!-- Pantalla de Resultado con Región Live -->
+        <!-- 'aria-live="polite"' hará que el lector anuncie el contenido cuando aparezca -->
+        <div id="result-card" class="card hidden" role="status" aria-live="polite">
             <span class="step-title">Prompt Final Optimizado</span>
-            <div id="result-area"></div>
-            <label>Usar el botón final y llevar el prompt a ChatGPT, Claude o Gemini</label>
-            <button class="btn-primary" onclick="copyToClipboard()">Copiar al Portapapeles</button>
-            <button class="btn-primary" style="background:transparent; color:var(--md-sys-color-primary);" onclick="resetApp()">Crear otro prompt</button>
+            <!-- Usamos un id descriptivo para el área de texto -->
+            <div id="result-area" aria-label="Resultado del prompt generado" tabindex="0"></div>
+            <label style="margin-top:10px;">Usar el botón copiar y pegar el prompt en ChatGPT, Claude o Gemini</label>
+  
+            <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
+                <button class="btn-primary" style="background: transparent; color: var(--md-sys-color-primary);" onclick="goBack()" aria-label="Volver al paso anterior">
+                    Volver
+                </button>
+          <button class="btn-primary" onclick="copyToClipboard()" aria-label="Copiar el prompt generado al portapapeles">
+                Copiar prompt
+            </button>
+            <button class="btn-primary" style="background:transparent; color:var(--md-sys-color-primary);" onclick="resetApp()" aria-label="Reiniciar el asistente y borrar datos">
+                Crear otro prompt
+            </button>
+            </div>
         </div>
     </main>
 
@@ -272,10 +320,15 @@ SOFTWARE.
         }
 
         /**
-         * Construye el prompt final basándose en las mejores prácticas de Google, OpenAI y Anthropic.
-         * Utiliza delimitadores claros y estructura jerárquica.
+         * Construye el prompt final basándose en las mejores prácticas de ingeniería de prompts.
+         * Implementa manejo de foco y regiones ARIA para asegurar que el resultado sea 
+         * anunciado correctamente por lectores de pantalla (TalkBack, NVDA).
+         * 
+         * @async
+         * @function generatePrompt
          */
         function generatePrompt() {
+            // 1. Captura de elementos de la interfaz
             const role = document.getElementById('role').value;
             const task = document.getElementById('task').value;
             const exIn = document.getElementById('example-input').value;
@@ -283,20 +336,53 @@ SOFTWARE.
             const format = document.getElementById('format').value;
             const temp = document.getElementById('temp').value;
             const cot = document.getElementById('cot').checked;
+            
+            const resultArea = document.getElementById('result-area');
+            const resultCard = document.getElementById('result-card');
 
-            // Construcción del Prompt con técnica de delimitadores (Google/Claude)
-            let prompt = `=== SYSTEM ===\nRole: ${role}\nTemperature: ${temp}\n\n`;
-            prompt += `=== TASK ===\n${task}\n\n`;
+            // 2. Construcción estructurada del Prompt (Estrategia Multi-Modelo)
+            // Usamos delimitadores claros (===) para mejorar la atención del modelo
+            let finalPrompt = `=== SYSTEM ===\nRole: ${role}\nConfiguración: Temperatura ${temp}\n\n`;
+            finalPrompt += `=== TASK ===\nInstrucción: ${task}\n\n`;
 
-            if(exIn && exOut) {
-                prompt += `=== EXAMPLES ===\nInput: ${exIn}\nOutput: ${exOut}\n\n`;
+            // Inclusión de Few-Shot Prompting (Ejemplos)
+            if (exIn && exOut) {
+                finalPrompt += `=== EXAMPLES ===\nInput: ${exIn}\nOutput: ${exOut}\n\n`;
             }
 
-            prompt += `=== OUTPUT REQUIREMENTS ===\n- Format: ${format}\n`;
-            if(cot) prompt += `- Think step-by-step before providing the final answer.\n`;
+            // Requerimientos de formato y lógica de pensamiento (CoT)
+            finalPrompt += `=== OUTPUT REQUIREMENTS ===\n- Formato: ${format}\n`;
+            if (cot) {
+                finalPrompt += `- Por favor, piensa paso a paso antes de responder para asegurar la máxima calidad.\n`;
+            }
 
-            document.getElementById('result-area').innerText = prompt;
+            // 3. Actualización de la Interfaz y Navegación
+            resultArea.innerText = finalPrompt;
+            
+            // Función de navegación previamente definida que quita .hidden del paso final
             navigateTo('result-card');
+
+            // Forzamos el guardado del nuevo prompt generado
+                autoSave(); 
+
+            /**
+             * Gestión de Accesibilidad:
+             * Movemos el foco al área de resultado tras un breve delay para permitir 
+             * que el navegador procese la transición visual de la card. 
+             * Esto activa el anuncio del lector de pantalla (aria-live).
+             */
+            setTimeout(() => {
+                // Aseguramos que el elemento tenga foco para que sea leído inmediatamente
+                resultArea.focus();
+                
+                // Opcional: Desplazamiento suave hacia el resultado en móviles
+                resultCard.scrollIntoView({ behavior: 'smooth' });
+            }, 150);
+
+            // Persistencia: Guardamos el estado final en LocalStorage
+            if (typeof autoSave === 'function') {
+                autoSave();
+            }
         }
 
         /**
@@ -307,7 +393,7 @@ SOFTWARE.
             const text = document.getElementById('result-area').innerText;
             try {
                 await navigator.clipboard.writeText(text);
-                alert('¡Copiado! Llevar el prompt a ChatGPT, Claude o Gemini');
+                alert('¡Copiado! Pegar el prompt en ChatGPT, Claude o Gemini');
             } catch (err) {
                 console.error('Error al copiar: ', err);
             }
@@ -340,10 +426,14 @@ function autoSave() {
         format: document.getElementById('format').value,
         temp: document.getElementById('temp').value,
         cot: document.getElementById('cot').checked,
+        // Guardamos el texto del prompt generado
+        generatedPrompt: document.getElementById('result-area').innerText,
         currentStep: getCurrentStepId()
     };
     localStorage.setItem('prompt_builder_data', JSON.stringify(data));
 }
+
+
 
 /**
  * Sanitiza una cadena de texto para prevenir ataques XSS convirtiendo
@@ -390,12 +480,19 @@ function loadSavedData() {
         document.getElementById('temp-val').innerText = data.temp || 0.7;
         document.getElementById('cot').checked = data.cot;
 
+        // RESTAURAR EL PROMPT GENERADO
+        if (data.generatedPrompt) {
+            document.getElementById('result-area').innerText = data.generatedPrompt;
+        }
+
+        // Navegar al paso guardado (si era 'result-card', ahora mostrará el texto)
         if (data.currentStep) navigateTo(data.currentStep);
     } catch (e) {
         console.error("Error al cargar datos seguros:", e);
         localStorage.removeItem('prompt_builder_data'); // Limpiamos si hay corrupción
     }
 }
+
 
 /**
  * Identifica qué tarjeta (paso) está visible actualmente.
@@ -445,7 +542,35 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+/**
+ * Navega al paso anterior en el flujo de la aplicación.
+ * @function goBack
+ */
+function goBack() {
+    const currentStepId = getCurrentStepId();
+    let previousStep = 'step1';
+
+    // Lógica de mapeo de pasos
+    switch (currentStepId) {
+        case 'step2':
+            previousStep = 'step1';
+            break;
+        case 'step-examples':
+            previousStep = 'step2';
+            break;
+        case 'step3':
+            previousStep = 'step-examples';
+            break;
+        case 'result-card':
+            previousStep = 'step3';
+            break;
+        default:
+            previousStep = 'step1';
+    }
+
+    navigateTo(previousStep);
+}
+
     </script>
 </body>
 </html>
-
