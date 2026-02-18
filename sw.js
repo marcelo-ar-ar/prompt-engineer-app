@@ -3,7 +3,7 @@
  * @description Service Worker para habilitar capacidades Offline y carga instantánea.
  */
 
-const CACHE_NAME = 'prompt-lab-v1';
+const CACHE_NAME = 'prompt-lab-v2';
 const ASSETS = [
     './',
     './index.html'
