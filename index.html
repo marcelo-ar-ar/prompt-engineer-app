@@ -234,6 +234,43 @@ SOFTWARE.
         to { bottom: 0; opacity: 0; }
     }
 
+    .step-explanation {
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+        padding: 0.5rem;
+        border-radius: 8px;
+        background: var(--md-sys-color-surface);
+        font-size: 0.875rem;
+        border: 1px solid var(--md-sys-color-outline);
+    }
+
+    .step-explanation summary {
+        font-weight: 500;
+        color: var(--md-sys-color-primary);
+        cursor: pointer;
+        outline: none;
+        list-style: none;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Icono de flecha simulado */
+    .step-explanation summary::before {
+        content: 'info';
+        font-family: 'Material Icons', sans-serif; /* Si usas iconos, o un simple 'ⓘ' */
+        margin-right: 8px;
+        font-size: 1.1rem;
+    }
+
+    .explanation-content {
+        margin-top: 0.5rem;
+        line-height: 1.4;
+        color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .explanation-content strong {
+        color: var(--md-sys-color-primary);
+    }
 
     </style>
 </head>
@@ -249,6 +286,15 @@ SOFTWARE.
             <label>Indicar a la IA su función</label>
             <input type="text" id="role" name="role" placeholder="Ej: Un tutor de matemáticas" aria-required="true">
 
+            <details class="step-explanation">
+                <summary>Explicación de este paso...</summary>
+                <div class="explanation-content" id="help-step1">
+                    <!-- Contenido dinámico basado en documentación oficial -->
+                    <p>Definir un <strong>rol</strong> (Persona) ayuda al modelo a filtrar su conocimiento. Según <a href="https://platform.openai.com" target="_blank">OpenAI</a>, esto mejora la relevancia y el tono de la respuesta.</p>
+                </div>
+            </details>
+
+
             <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
             <button class="btn-primary" onclick="navigateTo('step2')" aria-label="Ir al siguiente paso: Describir la tarea">Continuar</button>
             </div>
@@ -259,6 +305,14 @@ SOFTWARE.
             <span class="step-title">Paso 2: Describir la tarea</span>
             <label>Ser específico sobre lo que se necesita resolver</label>
             <textarea id="task" rows="4" placeholder="Describe la tarea detalladamente..."></textarea>
+
+            <details class="step-explanation">
+                <summary>Explicación de este paso...</summary>
+                <div class="explanation-content" id="help-step2">
+                    <!-- Contenido dinámico basado en documentación oficial -->
+                    <p>Proporcionar contexto reduce las alucinaciones. Google Cloud recomienda usar delimitadores para separar la tarea de los datos. [Google Cloud - Introduction to Prompt Design]</p>
+                </div>
+            </details>
 
             <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
                 <button class="btn-primary" style="background: transparent; color: var(--md-sys-color-primary);" onclick="goBack()" aria-label="Volver al paso anterior">
@@ -277,6 +331,15 @@ SOFTWARE.
             <input type="text" id="example-input" placeholder="User: Hola">
             <label style="margin-top:10px;">Ejemplo de Salida</label>
             <textarea id="example-output" rows="2" placeholder="Assistant: ¡Hola! ¿En qué ayudo?"></textarea>
+
+        <details class="step-explanation">
+            <summary>Explicación de este paso...</summary>
+            <div class="explanation-content" id="help-step-examples">
+                <!-- Contenido dinámico basado en documentación oficial -->
+                <p>El 'Few-shot prompting' es la técnica más efectiva. Anthropic sugiere que 1 a 3 ejemplos son suficientes para fijar el formato. [Anthropic - Claude Prompt Engineering Overview]</p>
+            </div>
+        </details>
+
 
             <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
                 <button class="btn-primary" style="background: transparent; color: var(--md-sys-color-primary);" onclick="goBack()" aria-label="Volver al paso anterior">
@@ -322,6 +385,14 @@ SOFTWARE.
                 <input type="checkbox" id="cot" checked style="width: auto;">
                 <label for="cot" style="display: inline;">Activar Pensamiento en Cadena (CoT)</label>
             </div>
+
+        <details class="step-explanation">
+            <summary>Explicación de este paso...</summary>
+            <div class="explanation-content" id="help-step3">
+                <!-- Contenido dinámico basado en documentación oficial -->
+                <p>Pedirle a la IA que 'piense paso a paso' activa el razonamiento lógico antes de la respuesta final. [OpenAI - Prompt Engineering Guide]</p>
+            </div>
+        </details>
 
             <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
                 <button class="btn-primary" style="background: transparent; color: var(--md-sys-color-primary);" onclick="goBack()" aria-label="Volver al paso anterior">
