@@ -4,7 +4,7 @@
  */
 
 // Incrementa esta versión cada vez que hagas cambios significativos
-const CACHE_NAME = 'prompt-lab-v3.3';
+const CACHE_NAME = 'prompt-lab-v260218.1911';
 
 // Definimos los recursos de forma relativa para que funcione en subcarpetas
 const ASSETS = [
