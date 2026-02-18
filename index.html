@@ -199,6 +199,42 @@ SOFTWARE.
         flex: 1;
     }
 
+    .snackbar {
+        visibility: hidden;
+        min-width: 18rem; /* 288px */
+        background-color: #313033; /* On-surface-variant en MD3 */
+        color: #f4eff4;
+        text-align: left;
+        border-radius: 4px; /* Las snackbars en MD3 son casi rectangulares */
+        padding: 0.875rem 1rem;
+        position: fixed;
+        z-index: 100;
+        left: 50%;
+        bottom: 2rem;
+        transform: translateX(-50%);
+        font-size: 0.875rem;
+        box-shadow: 0 3px 5px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .snackbar.show {
+        visibility: visible;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @keyframes fadein {
+        from { bottom: 0; opacity: 0; }
+        to { bottom: 2rem; opacity: 1; }
+    }
+
+    @keyframes fadeout {
+        from { bottom: 2rem; opacity: 1; }
+        to { bottom: 0; opacity: 0; }
+    }
+
+
     </style>
 </head>
 <body>
@@ -307,6 +343,10 @@ SOFTWARE.
             </button>
             </div>
         </div>
+
+    <!-- Contenedor para notificaciones Snackbar -->
+    <div id="snackbar" role="status" aria-live="polite" class="snackbar"></div>
+
     </main>
 
     <script>
@@ -393,7 +433,7 @@ SOFTWARE.
             const text = document.getElementById('result-area').innerText;
             try {
                 await navigator.clipboard.writeText(text);
-                alert('¡Copiado! Pegar el prompt en ChatGPT, Claude o Gemini');
+                showSnackbar("¡Copiado! Pegar el prompt en ChatGPT, Claude o Gemini");
             } catch (err) {
                 console.error('Error al copiar: ', err);
             }
@@ -536,11 +576,22 @@ function resetApp() {
  */
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-            .then(reg => console.log('Service Worker registrado con éxito', reg))
-            .catch(err => console.warn('Error al registrar Service Worker', err));
+        navigator.serviceWorker.register('./sw.js').then(reg => {
+            // Si hay un cambio en el SW, escuchamos cuando el nuevo tome el mando
+            reg.onupdatefound = () => {
+                const installingWorker = reg.installing;
+                installingWorker.onstatechange = () => {
+                    if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        // Notificamos al usuario o recargamos
+                        console.log('Nueva versión disponible. Recargando...');
+                        showSnackbar("Aplicación actualizada a la última versión");
+                        setTimeout(() => window.location.reload(), 1500);                    }
+                };
+            };
+        });
     });
 }
+
 
 /**
  * Navega al paso anterior en el flujo de la aplicación.
@@ -570,6 +621,23 @@ function goBack() {
 
     navigateTo(previousStep);
 }
+
+/**
+ * Muestra una notificación tipo Snackbar en la parte inferior.
+ * @param {string} message - El texto a mostrar.
+ * @function showSnackbar
+ */
+function showSnackbar(message) {
+    const snack = document.getElementById("snackbar");
+    snack.textContent = message;
+    snack.className = "snackbar show";
+    
+    // El tiempo coincide con la animación CSS (3 segundos en total)
+    setTimeout(() => { 
+        snack.className = snack.className.replace("show", ""); 
+    }, 3000);
+}
+
 
     </script>
 </body>
