@@ -291,21 +291,31 @@ SOFTWARE.
         <!-- Paso 3: Configuración Avanzada -->
         <div id="step3" class="card hidden">
             <span class="step-title">Paso 4: Parámetros Finales</span>
-            <label>Formato de Salida</label>
-            <select id="format">
-                <option value="Markdown">Markdown</option>
-                <option value="JSON">JSON</option>
-                <option value="Tabla">Tabla</option>
-                <option value="Lista de pasos">Lista de pasos</option>
+            <label for="format">Formato de Salida</label>
+            <select id="format" name="format">
+                <!-- Formatos Estructurados (Alta prioridad para automatización) -->
+                <option value="Markdown">Markdown (Ideal para documentación y GitHub)</option>
+                <option value="Tabla">Tabla (Comparativas y resúmenes)</option>
+                <option value="JSON">JSON (Estructura de datos para desarrolladores)</option>
+                
+                <!-- Formatos de Texto (Productividad) -->
+                <option value="Lista de puntos (Bulleted list)">Lista de puntos (Resúmenes rápidos)</option>
+                <option value="Email profesional">Email profesional</option>
+                <option value="Ensayo/Artículo">Ensayo o Artículo extenso</option>
+                
+                <!-- Formatos Técnicos/Creativos -->
+                <option value="Código fuente">Código fuente (Programación)</option>
+                <option value="Guion/Diálogo">Guion o Diálogo</option>
+                <option value="CSV">CSV (Para Excel o Google Sheets)</option>
             </select>
 
             <div class="slider-container">
                 <label style="display: flex; justify-content: space-between;">
-                    <span style="margin-top:10px;">Ajustar la creatividad</span>
+                    <span style="margin-top:12px;">Ajustar la creatividad</span>
                     <span id="temp-val">0.7</span>
                 </label>
                 <input type="range" id="temp" min="0" max="1" step="0.1" value="0.7" oninput="document.getElementById('temp-val').innerText = this.value">
-                <label style="font-size:0.8rem;">Usar una temperatura baja (0.1) para datos exactos o alta (0.8) para escritura creativa</label>
+                <label style="font-size:0.8rem;">Usar valor bajo (0.1) para datos exactos o alto (0.8) para escritura creativa</label>
             </div>
 
             <div style="margin-top: 15px;">
@@ -329,7 +339,7 @@ SOFTWARE.
             <span class="step-title">Prompt Final Optimizado</span>
             <!-- Usamos un id descriptivo para el área de texto -->
             <div id="result-area" aria-label="Resultado del prompt generado" tabindex="0"></div>
-            <label style="margin-top:10px;">Usar el botón copiar y pegar el prompt en ChatGPT, Claude o Gemini</label>
+            <label style="margin-top:10px;">Usar el botón copiar, y después pegar el prompt en ChatGPT, Claude o Gemini</label>
   
             <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
                 <button class="btn-primary" style="background: transparent; color: var(--md-sys-color-primary);" onclick="goBack()" aria-label="Volver al paso anterior">
@@ -360,15 +370,12 @@ SOFTWARE.
         }
 
         /**
-         * Construye el prompt final basándose en las mejores prácticas de ingeniería de prompts.
-         * Implementa manejo de foco y regiones ARIA para asegurar que el resultado sea 
-         * anunciado correctamente por lectores de pantalla (TalkBack, NVDA).
-         * 
-         * @async
+         * Genera el prompt final concatenando todas las entradas del usuario.
+         * Incluye validaciones específicas según el formato de salida y gestiona la accesibilidad.
          * @function generatePrompt
          */
         function generatePrompt() {
-            // 1. Captura de elementos de la interfaz
+            // 1. Captura de valores
             const role = document.getElementById('role').value;
             const task = document.getElementById('task').value;
             const exIn = document.getElementById('example-input').value;
@@ -380,50 +387,52 @@ SOFTWARE.
             const resultArea = document.getElementById('result-area');
             const resultCard = document.getElementById('result-card');
 
-            // 2. Construcción estructurada del Prompt (Estrategia Multi-Modelo)
-            // Usamos delimitadores claros (===) para mejorar la atención del modelo
-            let finalPrompt = `=== SYSTEM ===\nRole: ${role}\nConfiguración: Temperatura ${temp}\n\n`;
-            finalPrompt += `=== TASK ===\nInstrucción: ${task}\n\n`;
-
-            // Inclusión de Few-Shot Prompting (Ejemplos)
-            if (exIn && exOut) {
-                finalPrompt += `=== EXAMPLES ===\nInput: ${exIn}\nOutput: ${exOut}\n\n`;
-            }
-
-            // Requerimientos de formato y lógica de pensamiento (CoT)
-            finalPrompt += `=== OUTPUT REQUIREMENTS ===\n- Formato: ${format}\n`;
-            if (cot) {
-                finalPrompt += `- Por favor, piensa paso a paso antes de responder para asegurar la máxima calidad.\n`;
-            }
-
-            // 3. Actualización de la Interfaz y Navegación
-            resultArea.innerText = finalPrompt;
+            // 2. Construcción de instrucciones de formato (Validación Estricta)
+            let formatInstruction = `- Formato de salida requerido: ${format}.\n`;
             
-            // Función de navegación previamente definida que quita .hidden del paso final
+            // Basado en mejores prácticas de Anthropic para evitar "chatter" (texto innecesario)
+            if (format === 'JSON' || format === 'CSV') {
+                formatInstruction += `- IMPORTANTE: Proporciona únicamente la estructura de datos limpia. No incluyas introducciones, explicaciones ni comentarios adicionales fuera del bloque de código.\n`;
+            } else if (format === 'Tabla') {
+                formatInstruction += `- Organiza la información en una tabla Markdown clara con encabezados descriptivos.\n`;
+            }
+
+            // 3. Ensamblado del Prompt Maestro
+            let finalPrompt = `=== CONFIGURACIÓN ===\n`;
+            finalPrompt += `Rol: Actúa como ${role}\n`;
+            finalPrompt += `Creatividad (Temp): ${temp}\n\n`;
+
+            finalPrompt += `=== TAREA Y CONTEXTO ===\n`;
+            finalPrompt += `${task}\n\n`;
+
+            if (exIn && exOut) {
+                finalPrompt += `=== EJEMPLO DE REFERENCIA ===\n`;
+                finalPrompt += `Entrada: ${exIn}\nSalida esperada: ${exOut}\n\n`;
+            }
+
+            finalPrompt += `=== REQUERIMIENTOS DE SALIDA ===\n`;
+            finalPrompt += formatInstruction;
+            
+            if (cot) {
+                // Técnica 'Chain of Thought' recomendada por Google Cloud Vertex AI
+                finalPrompt += `- Piensa paso a paso para asegurar que la respuesta cumpla con todos los criterios anteriores.\n`;
+            }
+
+            // 4. Actualización de UI y Accesibilidad
+            resultArea.innerText = finalPrompt;
             navigateTo('result-card');
+            
+            // Persistencia inmediata
+            if (typeof autoSave === 'function') autoSave();
 
-            // Forzamos el guardado del nuevo prompt generado
-                autoSave(); 
-
-            /**
-             * Gestión de Accesibilidad:
-             * Movemos el foco al área de resultado tras un breve delay para permitir 
-             * que el navegador procese la transición visual de la card. 
-             * Esto activa el anuncio del lector de pantalla (aria-live).
-             */
+            // Feedback táctil y visual para accesibilidad
             setTimeout(() => {
-                // Aseguramos que el elemento tenga foco para que sea leído inmediatamente
-                resultArea.focus();
-                
-                // Opcional: Desplazamiento suave hacia el resultado en móviles
+                resultArea.focus(); // Mueve el foco para lectores de pantalla
                 resultCard.scrollIntoView({ behavior: 'smooth' });
             }, 150);
-
-            // Persistencia: Guardamos el estado final en LocalStorage
-            if (typeof autoSave === 'function') {
-                autoSave();
-            }
         }
+
+
 
         /**
          * Copia el texto generado al portapapeles del dispositivo.
