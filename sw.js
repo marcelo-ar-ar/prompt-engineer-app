@@ -19,14 +19,13 @@ const ASSETS = [
  * Si uno falla (ej. favicon ausente), los demás se guardan igual.
  */
 self.addEventListener('install', (event) => {
+    // Forzar al nuevo SW a convertirse en el SW activo de inmediato
+    self.skipWaiting(); 
+    
     event.waitUntil(
         caches.open(CACHE_NAME).then((cache) => {
-            console.log('Abriendo caché y agregando recursos...');
-            // Usamos map y Promise.all para que un error 404 en un archivo no rompa todo
             return Promise.all(
-                ASSETS.map(url => {
-                    return cache.add(url).catch(err => console.warn(`Fallo al cachear: ${url}`, err));
-                })
+                ASSETS.map(url => cache.add(url).catch(err => console.warn(`Error: ${url}`)))
             );
         })
     );
@@ -46,14 +45,18 @@ self.addEventListener('fetch', (event) => {
 });
 
 /**
- * Activación: Limpia versiones antiguas de caché para liberar espacio.
+ * Activación: Limpieza y reclamo de control.
  */
 self.addEventListener('activate', (event) => {
+    // Permite que el SW tome control de la página sin esperar a una recarga
+    event.waitUntil(self.clients.claim()); 
+
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
                 cacheNames.map((cacheName) => {
                     if (cacheName !== CACHE_NAME) {
+                        console.log('Borrando caché antigua:', cacheName);
                         return caches.delete(cacheName);
                     }
                 })
