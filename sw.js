@@ -3,25 +3,35 @@
  * @description Service Worker para habilitar capacidades Offline y carga instantánea.
  */
 
-const CACHE_NAME = 'prompt-lab-v2';
+const CACHE_NAME = 'prompt-lab-v3'; // <--- Cambia este número cada vez que edites tu HTML/CSS
 const ASSETS = [
-    './',
-    './index.html'
+  '/',
+  '/index.html'
 ];
 
-// Instalación: Almacena los archivos en caché
+// 1. INSTALACIÓN: Crea la nueva caché
 self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-    );
+  self.skipWaiting(); // Obliga al nuevo SW a tomar el control de inmediato
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
+  );
 });
 
-// Estrategia: Cache First, Fallback to Network
+// 2. ACTIVACIÓN: Limpia cachés viejas
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then(keys => {
+      return Promise.all(
+        keys.filter(key => key !== CACHE_NAME) // Si la caché no es la actual...
+            .map(key => caches.delete(key))    // ... la borramos
+      );
+    })
+  );
+});
+
+// 3. FETCH: Estrategia "Cache First"
 self.addEventListener('fetch', (event) => {
-    event.respondWith(
-        caches.match(event.request).then((response) => {
-            return response || fetch(event.request);
-        })
-    );
+  event.respondWith(
+    caches.match(event.request).then(res => res || fetch(event.request))
+  );
 });
-
