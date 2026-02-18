@@ -68,13 +68,14 @@ function autoSave() {
 
 ##🛠️ Especificaciones Técnicas del Proyecto
 
-Componente	        Detalle Técnico
-Arquitectura	    Single Page Application (SPA) / Vanilla Web Stack
-Design System	    Material Design 3 (M3) - Material You
-Metodología Prompt	Multi-Framework (Google Cloud, OpenAI, Anthropic)
-Persistencia	    Web Storage API (localStorage) con Auto-Save asíncrono
-Adaptabilidad	    Media Queries prefers-color-scheme (Dark/Light Mode)
-Documentación	    Estándar JSDoc para funciones y cabeceras
+| Componente         | Detalle Técnico                                        |
+|--------------------|--------------------------------------------------------|
+| Arquitectura       | Single Page Application (SPA) / Vanilla Web Stack      |
+| Design System      | Material Design 3 (M3) - Material You                  |
+| Metodología Prompt | Multi-Framework (Google Cloud, OpenAI, Anthropic)      |
+| Persistencia       | Web Storage API (localStorage) con Auto-Save asíncrono |
+| Adaptabilidad      | Media Queries prefers-color-scheme (Dark/Light Mode)   |
+| Documentación      | Estándar JSDoc para funciones y cabeceras              |
 
 ## 📊 Metadatos de la Sesión
 
@@ -107,15 +108,12 @@ La aplicación ha sido diseñada para ser "Zero-Dependency", lo que garantiza qu
 
 ## 📊 Reporte de Rendimiento Estimado (Lighthouse)
 
-Métrica	        Puntuación	Explicación Técnica
-
-Performance	    100/100	    El First Contentful Paint (FCP) es '<' 0.3s debido a que no hay frameworks (React/Vue).
-
-Accessibility	100/100	    Uso de etiquetas label vinculadas, contraste Material Design y fuentes legibles.
-
-Best Practices	100/100	    Implementación de HTTPS (alojado) y carga segura de recursos.
-
-SEO	            100/100	    Etiquetas meta viewport y estructura semántica correcta.
+| Métrica        | Puntuación | Explicación Técnica                                                                     |
+|----------------|------------|-----------------------------------------------------------------------------------------|
+| Performance    | 100/100    | El First Contentful Paint (FCP) es '<' 0.3s debido a que no hay frameworks (React/Vue). |
+| Accessibility  | 100/100    | Uso de etiquetas label vinculadas, contraste Material Design y fuentes legibles.        |
+| Best Practices | 100/100    | Implementación de HTTPS (alojado) y carga segura de recursos.                           |
+| SEO            | 100/100    | Etiquetas meta viewport y estructura semántica correcta.                                |
 
 ## ⚡ Análisis de Tiempos de Carga (Mobile-First)
 
