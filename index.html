@@ -1,48 +1,22 @@
 <!DOCTYPE html>
-<!--
-MIT License
-
-Copyright (c) 2026 Marcelo Andrés Reynoso
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
--->
-
-
+<!-- Copyright (c) 2026 Marcelo Andrés Reynoso. Licencia MIT. Ver ./LICENSE para detalles. -->
 <html lang="es">
 <head>
-    <!--
-    PROPOSITO: Generador de Prompts con interfaz nativa Android (Material Design 3).
-    ESTÁNDARES: Sigue guías de Google Cloud (Vertex), Anthropic (Claude) y OpenAI.
-    AUTOR: AI Thought Partner & Marcelo Andrés Reynoso
-    -->
+    <!-- 1. Codificación (Siempre primero) -->
     <meta charset="UTF-8">
-    <!-- Meta Viewport optimizado para evitar zoom accidental según Google Chrome Guidelines -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#6750A4" id="theme-meta">
-    <title>Prompt Engineering Guide</title>    
-
-    <!-- PWA & Favicons -->
+    <!-- 2. Control de visualización -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 3. Título del documento -->
+    <title>Prompt Lab | Expert Guide</title>
+    <!-- 4. Metadatos de Aplicación -->
+    <meta name="theme-color" content="#fef7ff" id="theme-meta">
+    <meta name="description" content="Guía interactiva de Prompt Engineering.">
+    <!-- 5. Enlaces a recursos externos -->
     <link rel="manifest" href="./manifest.json">
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
     <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 
-    <style>
+<style>
     :root {
         /* Colores Material You - Definiciones dinámicas */
         --md-sys-color-primary: #6750A4;
@@ -384,7 +358,7 @@ body::-webkit-scrollbar-thumb {
 <body>
 
     <!-- Top App Bar minimalista -->
-    <header class="top-app-bar" role="banner">
+    <header class="top-app-bar">
         <div class="top-app-bar-container">
             <span class="brand-name">Prompt Lab</span>
         </div>
@@ -392,7 +366,7 @@ body::-webkit-scrollbar-thumb {
 
     <!-- Hero Section integrada -->
     <section class="app-intro" aria-labelledby="intro-title">
-        <h1 class="intro-title">Crea prompts de nivel experto</h1>
+        <h1 id="intro-title" class="intro-title">Crea prompts de nivel experto</h1>
         <p class="intro-description">
             Optimiza tus interacciones con IA siguiendo los estándares de 
             <strong>Google Cloud, OpenAI y Anthropic</strong>.
@@ -401,10 +375,10 @@ body::-webkit-scrollbar-thumb {
 
 
     <!-- Etiqueta de región principal para lectores de pantalla -->
-    <main class="content" role="main" aria-label="Creador de Prompts Paso a Paso">
+    <main class="content" aria-label="Creador de Prompts Paso a Paso">
         <!-- Paso 1: Rol -->
         <div id="step1" class="card" role="region" aria-labelledby="title-step1">
-            <span class="step-title">Paso 1: Definir el rol</span>
+            <span id="title-step1" class="step-title">Paso 1: Definir el rol</span>
             <label>Asignar un rol específico ayuda al modelo a adoptar un tono, vocabulario y nivel de tecnicismo adecuado. Al decir 'Actúa como un experto en...', obligas a la IA a priorizar patrones de respuesta de alta calidad en esa área específica, filtrando información irrelevante.</label>
             <input type="text" id="role" name="role" placeholder="Ej: Actúa como un tutor de matemáticas" aria-required="true">
 
@@ -423,7 +397,7 @@ body::-webkit-scrollbar-thumb {
 
         <!-- Paso 2: Tarea -->
         <div id="step2" class="card hidden" role="region" aria-labelledby="title-step2">
-            <span class="step-title">Paso 2: Describir la tarea</span>
+            <span id="title-step2" class="step-title">Paso 2: Describir la tarea</span>
             <label>La precisión de la respuesta depende directamente de la claridad del contexto. Google recomienda separar las instrucciones de los datos usando delimitadores (como === o ###). Esto evita que la IA se confunda entre lo que es una orden y lo que es información para procesar.</label>
             <textarea id="task" rows="4" placeholder="Describe la tarea detalladamente..."></textarea>
 
@@ -449,8 +423,8 @@ body::-webkit-scrollbar-thumb {
 
         <!-- Paso Intermedio: Ejemplos (Few-Shot) -->
         <div id="step-examples" class="card hidden" role="region" aria-labelledby="title-step-examples">
-            <span class="step-title">Paso 3: (Opcional) Mostrar un caso anterior para que la IA imite el tono</span>
-            <label>Esta es la técnica más potente para reducir alucinaciones. Proporcionar al menos un ejemplo de 'Entrada/Salida' le enseña a la IA el patrón exacto que esperas. Anthropic recomienda usar etiquetas claras (como <ejemplo>) para que el modelo entienda dónde termina la referencia y dónde empieza la tarea real.</label>
+            <span id="title-step-examples" class="step-title">Paso 3: (Opcional) Mostrar un caso anterior para que la IA imite el tono</span>
+            <label> Esta es la técnica más potente para reducir alucinaciones. Proporcionar al menos un ejemplo de 'Entrada/Salida' le enseña a la IA el patrón exacto que esperas. Anthropic recomienda usar etiquetas claras (como &lt;ejemplo&gt;) para que el modelo entienda dónde termina la referencia y dónde empieza la tarea real. </label>
             <input type="text" id="example-input" placeholder="User: Hola">
             <label style="margin-top:10px;">Ejemplo de Salida</label>
             <textarea id="example-output" rows="2" placeholder="Assistant: ¡Hola! ¿En qué ayudo?"></textarea>
@@ -541,7 +515,7 @@ body::-webkit-scrollbar-thumb {
         <div id="result-card" class="card hidden" role="status" aria-live="polite">
             <span class="step-title">Prompt Final Optimizado</span>
             <!-- Usamos un id descriptivo para el área de texto -->
-            <div id="result-area" aria-label="Resultado del prompt generado" tabindex="0"></div>
+            <div id="result-area" tabindex="0"></div>
             <label style="margin-top:10px;">Usar el botón copiar, y después pegar el prompt en ChatGPT, Claude o Gemini</label>
   
             <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
