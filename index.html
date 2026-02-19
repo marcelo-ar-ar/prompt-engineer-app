@@ -32,11 +32,16 @@ SOFTWARE.
     AUTOR: AI Thought Partner & Marcelo Andrés Reynoso
     -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Meta Viewport optimizado para evitar zoom accidental según Google Chrome Guidelines -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#6750A4" id="theme-meta">
     <title>Prompt Engineering Guide</title>    
-    <link href="https://fonts.googleapis.com" rel="stylesheet">
+
+    <!-- PWA & Favicons -->
     <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+
     <style>
     :root {
         /* Colores Material You - Definiciones dinámicas */
@@ -63,7 +68,7 @@ SOFTWARE.
 
     body {
         margin: 0;
-        font-family: 'Roboto', sans-serif;
+        font-family: Roboto, "Droid Sans", system-ui, sans-serif;
         font-size: 1rem; /* Base 16px para escalabilidad */
         background-color: var(--md-sys-color-surface);
         color: var(--md-sys-color-on-surface);
@@ -72,17 +77,6 @@ SOFTWARE.
         height: 100vh;
         transition: background-color 0.3s ease;
         -webkit-font-smoothing: antialiased;
-    }
-
-    /* Estructura Fija (px) para consistencia visual */
-    .top-app-bar {
-        height: 64px; 
-        display: flex;
-        align-items: center;
-        padding: 0 20px;
-        font-size: 1.375rem; /* 22px - Escala con el sistema */
-        background: var(--md-sys-color-surface);
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Elevación sutil en px */
     }
 
     .content {
@@ -115,6 +109,7 @@ SOFTWARE.
     }
 
     label { 
+        font-family: Roboto, sans-serif;
         display: block; 
         margin-bottom: 0.5rem; 
         font-weight: 500; 
@@ -234,66 +229,192 @@ SOFTWARE.
         to { bottom: 0; opacity: 0; }
     }
 
-    .step-explanation {
-        margin-top: 0.5rem;
-        margin-bottom: 1rem;
-        padding: 0.5rem;
-        border-radius: 8px;
-        background: var(--md-sys-color-surface);
-        font-size: 0.875rem;
-        border: 1px solid var(--md-sys-color-outline);
-    }
 
-    .step-explanation summary {
-        font-weight: 500;
-        color: var(--md-sys-color-primary);
-        cursor: pointer;
-        outline: none;
-        list-style: none;
-        display: flex;
-        align-items: center;
-    }
+.step-explanation {
+    margin: 0.75rem 0 1.25rem 0;
+    padding: 0;
+    border-radius: 0.75rem; /* 12px */
+    background: var(--md-sys-color-surface-container); /* Fondo sutilmente distinto */
+    border: none; /* Eliminamos el borde tipo input */
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-    /* Icono de flecha simulado */
-    .step-explanation summary::before {
-        content: 'info';
-        font-family: 'Material Icons', sans-serif; /* Si usas iconos, o un simple 'ⓘ' */
-        margin-right: 8px;
-        font-size: 1.1rem;
-    }
+.step-explanation summary {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--md-sys-color-primary);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    background: rgba(103, 80, 164, 0.05); /* Tinte muy suave del color primario */
+}
 
-    .explanation-content {
-        margin-top: 0.5rem;
-        line-height: 1.4;
-        color: var(--md-sys-color-on-surface-variant);
-    }
+/* Icono de flecha que rota al abrir */
+.step-explanation summary::before {
+    content: '▶';
+    display: inline-block;
+    margin-right: 0.75rem;
+    font-size: 0.625rem;
+    transition: transform 0.2s ease;
+}
 
-    .explanation-content strong {
-        color: var(--md-sys-color-primary);
-    }
+.step-explanation[open] summary::before {
+    transform: rotate(90deg);
+}
+
+/* Ocultar el marcador nativo de Chrome/Safari */
+.step-explanation summary::-webkit-details-marker {
+    display: none;
+}
+
+.explanation-content {
+    padding: 0 1rem 1rem 1rem;
+    line-height: 1.5;
+    font-size: 0.8125rem; /* Un poco más pequeña que el input */
+    color: var(--md-sys-color-on-surface);
+    opacity: 0.9;
+}
+
+.explanation-content p {
+    margin: 0.5rem 0 0 0;
+}
+
+/* Diferenciador visual: una línea lateral sutil */
+.step-explanation[open] {
+    border-left: 4px solid var(--md-sys-color-primary);
+}
+
+.app-intro {
+    padding: 1.5rem 1rem 0.5rem 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+}
+
+
+.intro-description strong {
+    color: var(--md-sys-color-primary);
+    font-weight: 500;
+}
+
+/* Rediseño del Header */
+.top-app-bar {
+    height: 3.5rem; /* 56px estándar MD3 */
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    background-color: var(--md-sys-color-surface);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.brand-name {
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1rem;
+    color: var(--md-sys-color-outline);
+}
+
+/* Rediseño de la Sección Hero */
+.app-hero {
+    padding: 2rem 1.5rem 1rem 1.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.intro-title {
+    font-size: 2.25rem; /* Título más prominente y moderno */
+    font-weight: 400; /* MD3 prefiere pesos ligeros para títulos grandes */
+    color: var(--md-sys-color-on-surface);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.intro-description {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--md-sys-color-on-surface);
+    opacity: 0.7;
+    margin-top: 0.75rem;
+}
+
+/* Ajuste sutil para las tarjetas para que no se sientan pegadas */
+.content {
+    padding-top: 0.5rem;
+}
+
+/* Ocultar barra de scroll en Chrome, Safari y Opera (Android/iOS) */
+.content::-webkit-scrollbar {
+    display: none;
+}
+
+/* Ocultar en Firefox y Edge */
+.content {
+    -ms-overflow-style: none;  /* IE y Edge */
+    scrollbar-width: none;  /* Firefox */
+    
+    /* Asegura el rebote elástico suave típico de apps móviles */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Opcional: Si quieres que aparezca una línea muy fina solo al moverte */
+body::-webkit-scrollbar {
+    width: 4px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background: var(--md-sys-color-outline);
+    border-radius: 10px;
+    overscroll-behavior-y: contain; /* Evita el 'pull-to-refresh' accidental de Chrome */
+}
 
     </style>
 </head>
 <body>
 
-    <header class="top-app-bar">Prompt Engineering Lab</header>
+    <!-- Top App Bar minimalista -->
+    <header class="top-app-bar" role="banner">
+        <div class="top-app-bar-container">
+            <span class="brand-name">Prompt Lab</span>
+        </div>
+    </header>
+
+    <!-- Hero Section integrada -->
+    <section class="app-intro" aria-labelledby="intro-title">
+        <h1 class="intro-title">Crea prompts de nivel experto</h1>
+        <p class="intro-description">
+            Optimiza tus interacciones con IA siguiendo los estándares de 
+            <strong>Google Cloud, OpenAI y Anthropic</strong>.
+        </p>
+    </section>
+
 
     <!-- Etiqueta de región principal para lectores de pantalla -->
     <main class="content" role="main" aria-label="Creador de Prompts Paso a Paso">
         <!-- Paso 1: Rol -->
         <div id="step1" class="card" role="region" aria-labelledby="title-step1">
             <span class="step-title">Paso 1: Definir el rol</span>
-            <label>Indicar a la IA su función</label>
-            <input type="text" id="role" name="role" placeholder="Ej: Un tutor de matemáticas" aria-required="true">
+            <label>Asignar un rol específico ayuda al modelo a adoptar un tono, vocabulario y nivel de tecnicismo adecuado. Al decir 'Actúa como un experto en...', obligas a la IA a priorizar patrones de respuesta de alta calidad en esa área específica, filtrando información irrelevante.</label>
+            <input type="text" id="role" name="role" placeholder="Ej: Actúa como un tutor de matemáticas" aria-required="true">
 
             <details class="step-explanation">
-                <summary>Explicación de este paso...</summary>
+                <summary>Consejo de Experto...</summary>
                 <div class="explanation-content" id="help-step1">
-                    <!-- Contenido dinámico basado en documentación oficial -->
-                    <p>Definir un <strong>rol</strong> (Persona) ayuda al modelo a filtrar su conocimiento. Según <a href="https://platform.openai.com" target="_blank">OpenAI</a>, esto mejora la relevancia y el tono de la respuesta.</p>
+                    <p>No solo digas 'Experto', sé específico: 'Actúa como un Senior Product Manager especializado en accesibilidad web'.</p>
+                    <p style="font-size: 0.75rem; opacity: 0.8;">Fuente: OpenAI - Give the model a persona</p>
                 </div>
             </details>
-
 
             <div style="display: flex; gap: 0.5rem; margin-top: 1.25rem;">
             <button class="btn-primary" onclick="navigateTo('step2')" aria-label="Ir al siguiente paso: Describir la tarea">Continuar</button>
@@ -303,14 +424,16 @@ SOFTWARE.
         <!-- Paso 2: Tarea -->
         <div id="step2" class="card hidden" role="region" aria-labelledby="title-step2">
             <span class="step-title">Paso 2: Describir la tarea</span>
-            <label>Ser específico sobre lo que se necesita resolver</label>
+            <label>La precisión de la respuesta depende directamente de la claridad del contexto. Google recomienda separar las instrucciones de los datos usando delimitadores (como === o ###). Esto evita que la IA se confunda entre lo que es una orden y lo que es información para procesar.</label>
             <textarea id="task" rows="4" placeholder="Describe la tarea detalladamente..."></textarea>
 
             <details class="step-explanation">
-                <summary>Explicación de este paso...</summary>
+                <summary>Consejo experto...</summary>
                 <div class="explanation-content" id="help-step2">
-                    <!-- Contenido dinámico basado en documentación oficial -->
-                    <p>Proporcionar contexto reduce las alucinaciones. Google Cloud recomienda usar delimitadores para separar la tarea de los datos. [Google Cloud - Introduction to Prompt Design]</p>
+                    <p>Incluye siempre el 'para qué' (el objetivo final) y a quién va dirigida la respuesta.</p>
+                    <p style="font-size: 0.75rem; opacity: 0.8;">
+                        Fuente: Google Cloud - Context and Delimiters
+                    </p>
                 </div>
             </details>
 
@@ -327,16 +450,18 @@ SOFTWARE.
         <!-- Paso Intermedio: Ejemplos (Few-Shot) -->
         <div id="step-examples" class="card hidden" role="region" aria-labelledby="title-step-examples">
             <span class="step-title">Paso 3: (Opcional) Mostrar un caso anterior para que la IA imite el tono</span>
-            <label>Ejemplo de Entrada</label>
+            <label>Esta es la técnica más potente para reducir alucinaciones. Proporcionar al menos un ejemplo de 'Entrada/Salida' le enseña a la IA el patrón exacto que esperas. Anthropic recomienda usar etiquetas claras (como <ejemplo>) para que el modelo entienda dónde termina la referencia y dónde empieza la tarea real.</label>
             <input type="text" id="example-input" placeholder="User: Hola">
             <label style="margin-top:10px;">Ejemplo de Salida</label>
             <textarea id="example-output" rows="2" placeholder="Assistant: ¡Hola! ¿En qué ayudo?"></textarea>
 
         <details class="step-explanation">
-            <summary>Explicación de este paso...</summary>
+            <summary>Consejo experto...</summary>
             <div class="explanation-content" id="help-step-examples">
-                <!-- Contenido dinámico basado en documentación oficial -->
-                <p>El 'Few-shot prompting' es la técnica más efectiva. Anthropic sugiere que 1 a 3 ejemplos son suficientes para fijar el formato. [Anthropic - Claude Prompt Engineering Overview]</p>
+                <p>Si quieres una salida en JSON, el ejemplo debe estar en un JSON válido.</p>
+                <p style="font-size: 0.75rem; opacity: 0.8;">
+                    Fuente: Anthropic - Use Examples
+                </p>
             </div>
         </details>
 
@@ -374,9 +499,10 @@ SOFTWARE.
 
             <div class="slider-container">
                 <label style="display: flex; justify-content: space-between;">
-                    <span style="margin-top:12px;">Ajustar la creatividad</span>
+                    <span style="margin-top:12px;">Control de creatividad:</span>
                     <span id="temp-val" style="margin-top:12px;">0.7</span>
                 </label>
+
                 <input type="range" id="temp" min="0" max="1" step="0.1" value="0.7" oninput="document.getElementById('temp-val').innerText = this.value">
                 <label style="font-size:0.8rem;">Usar valor bajo (0.1) para datos exactos o alto (0.8) para escritura creativa</label>
             </div>
@@ -384,13 +510,19 @@ SOFTWARE.
             <div style="margin-top: 15px;">
                 <input type="checkbox" id="cot" checked style="width: auto;">
                 <label for="cot" style="display: inline;">Activar Pensamiento en Cadena (CoT)</label>
+                <label style="display: flex; justify-content: space-between;">
+                    <span style="margin-top:12px;">Pedirle a la IA que 'piense paso a paso' activa el razonamiento lógico antes de generar la respuesta final. Esto es crucial para tareas complejas o matemáticas.</span>
+                </label>
             </div>
 
         <details class="step-explanation">
-            <summary>Explicación de este paso...</summary>
+            <summary>Consejo experto...</summary>
             <div class="explanation-content" id="help-step3">
                 <!-- Contenido dinámico basado en documentación oficial -->
-                <p>Pedirle a la IA que 'piense paso a paso' activa el razonamiento lógico antes de la respuesta final. [OpenAI - Prompt Engineering Guide]</p>
+                <p>Usa creatividad 0 para reportes técnicos y 0.7 para marketing o lluvia de ideas.</p>
+                <p style="font-size: 0.75rem; opacity: 0.8;">
+                Fuente: OpenAI & Anthropic - Chain of Thought
+                </p>
             </div>
         </details>
 
